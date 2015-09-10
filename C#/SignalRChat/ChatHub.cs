@@ -43,8 +43,7 @@ namespace SignalRChat
 
         public void sendAudioFile(string name, string buffer, string type)
         {
-            Clients.All.createAudioElement();
-        }
+            Clients.All.createAudioElement(0, name, buffer, type);
         }
     }
 }
