@@ -1,58 +1,4 @@
 ﻿var chat = $.connection.chatHub;
-$(function () {
-    
-    $.connection.hub.start().done(function () {
-        updateClientSounds();
-    });
-    
-  /*  document.getElementById('file').addEventListener('change', handleFileSelect, false);
-    function handleFileSelect(evt) {
-        var file = evt.target.files[0];
-        var fr = new FileReader();
-        fr.addEventListener("load", function () {
-            var len = fr.result.length;
-            var buf = new ArrayBuffer(len);
-            var view = new Uint8Array(buf);
-            for (var i = 0; i < len; i++) {
-                view[i] = fr.result.charCodeAt(i) & 0xff;
-            }
-            var blob = new Blob([view], { type: "audio/x-wav" });
-
-            $("#audioPlayer").append("<source src='" + URL.createObjectURL(blob) + "'/>")
-
-            chat.server.send($('#displayname').val(), fr.result);
-        });
-
-        fr.readAsBinaryString(file);
-
-    }*/
-
-    /*chat.client.broadcastMessage = function (name, message) {
-        var len = message.length;
-        var buf = new ArrayBuffer(len);
-        var view = new Uint8Array(buf);
-        for (var i = 0; i < len; i++) {
-            view[i] = message.charCodeAt(i) & 0xff;
-        }
-        var blob = new Blob([view], { type: "audio/x-wav" });
-
-
-        $("#audioPlayer").append("<source src='" + URL.createObjectURL(blob) + "'/>")
-    };
-
-    $('#displayname').val(prompt('Enter your name:', ''));
-    $('#message').focus();
-
-    $.connection.hub.start().done(function () {
-        $('#hzSelector').change(function () {
-            chat.server.send($('#displayname').val(), $('#hzSelector').val());
-            $('#message').val('').focus();
-
-
-        });
-    });*/
-});
-
 var oscillators = new Array();
 var context = new AudioContext();
 
@@ -83,7 +29,8 @@ chat.client.broadcastCreateSound = function(id){
     createHtmlElement(id);
 }
 
-chat.client.broadcastUpdateClientSounds = function (sounds) {
+chat.client.broadcastUpdateClientSounds = function (jsonSounds) {
+    sounds = JSON.parse(jsonSounds);
     for (i in sounds) {
         createHtmlElement(sounds[i].id, sounds[i].f);
     }
@@ -124,3 +71,57 @@ var stopSounds = function () {
         oscillators[i].connect(context.destination);
     }
 }
+
+$(function () {
+
+    $.connection.hub.start().done(function () {
+        chat.server.updateClientSounds();
+    });
+
+    /*  document.getElementById('file').addEventListener('change', handleFileSelect, false);
+      function handleFileSelect(evt) {
+          var file = evt.target.files[0];
+          var fr = new FileReader();
+          fr.addEventListener("load", function () {
+              var len = fr.result.length;
+              var buf = new ArrayBuffer(len);
+              var view = new Uint8Array(buf);
+              for (var i = 0; i < len; i++) {
+                  view[i] = fr.result.charCodeAt(i) & 0xff;
+              }
+              var blob = new Blob([view], { type: "audio/x-wav" });
+  
+              $("#audioPlayer").append("<source src='" + URL.createObjectURL(blob) + "'/>")
+  
+              chat.server.send($('#displayname').val(), fr.result);
+          });
+  
+          fr.readAsBinaryString(file);
+  
+      }*/
+
+    /*chat.client.broadcastMessage = function (name, message) {
+        var len = message.length;
+        var buf = new ArrayBuffer(len);
+        var view = new Uint8Array(buf);
+        for (var i = 0; i < len; i++) {
+            view[i] = message.charCodeAt(i) & 0xff;
+        }
+        var blob = new Blob([view], { type: "audio/x-wav" });
+
+
+        $("#audioPlayer").append("<source src='" + URL.createObjectURL(blob) + "'/>")
+    };
+
+    $('#displayname').val(prompt('Enter your name:', ''));
+    $('#message').focus();
+
+    $.connection.hub.start().done(function () {
+        $('#hzSelector').change(function () {
+            chat.server.send($('#displayname').val(), $('#hzSelector').val());
+            $('#message').val('').focus();
+
+
+        });
+    });*/
+});
