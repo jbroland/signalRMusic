@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Security;
+
 namespace SignalRChat
 {
     public class ChatHub : Hub
     {
-        private Dictionary<string,Sound> soundDico=new Dictionary<string, Sound>();
+       
+        
         
         
         public void Send(string name, string message)
@@ -16,9 +19,8 @@ namespace SignalRChat
 
         public void createSound()
         {
-            var id = "sound" + soundDico.Count;
-            soundDico.Add(id,new Sound());
-            Clients.All.broadcastCreateSound(id);
+            SoundManager.Manager.addSong();
+            Clients.All.broadcastCreateSound();
         }
 
         public void modifyFrequency(string id, int f)
