@@ -84,18 +84,19 @@ chat.client.broadcastCreateSound = function(id){
     createHtmlElement(id);
 }
 
-var setFrequency = function (el, f, fromServer) {
+var setFrequency = function (el, f) {
     var id = $(el).parents(".sound").attr("id");
-    oscillators[id.replace("sound", "")].frequency.value = f;
-
-    if (!fromServer) {
-        chat.server.modifyFrequency(id, f);
-    }
-    
+    chat.server.modifyFrequency(id, parseInt(f));
 }
 
 chat.client.broadcastFrequencyChange = function (id, f) {
-    setFrequency(id, f, true);
+    updateFrequency(id, f);
+}
+
+var updateFrequency = function (id, f) {
+    
+    oscillators[id.replace("sound", "")].frequency.value = f;
+    $("#" + id + " input").val(f);
 }
 
 var playSounds = function () {

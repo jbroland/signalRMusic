@@ -15,9 +15,9 @@ namespace SignalRChat
             Clients.All.broadcastCreateSound(id);
         }
 
-        public void modifyFrequency(int id, int f)
+        public void modifyFrequency(string id, int f)
         {
-            Clients.All.broadcastFrequencyChange(id);
+            Clients.All.broadcastFrequencyChange(id, f);
         }
     }
 }
