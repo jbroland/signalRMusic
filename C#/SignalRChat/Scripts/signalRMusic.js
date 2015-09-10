@@ -69,7 +69,7 @@ var createHtmlElement = function (id) {
     //create osc object
     var temp = context.createOscillator();
     temp.connect(context.destination);
-    oscillators.push(temp);
+    oscillators[id] = temp;
 
     //create html element
     var html = new Array();
@@ -93,9 +93,10 @@ chat.client.broadcastFrequencyChange = function (id, f) {
 }
 
 var updateFrequency = function (id, f) {
-    
-    oscillators[id.replace("sound", "")].frequency.value = f;
-    $("#" + id + " input").val(f);
+    if (oscillators[id]) {
+        oscillators[id].frequency.value = f;
+        $("#" + id + " input").val(f);
+    }
 }
 
 var playSounds = function () {
