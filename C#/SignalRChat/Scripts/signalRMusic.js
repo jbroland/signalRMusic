@@ -59,10 +59,9 @@ var context = new AudioContext();
 
 
 
-var addSound = function (id) {
+var addSound = function () {
     
-    var newId = (id) ? id : 'sound' + oscillators.length;
-    chat.server.createSound(newId);
+    chat.server.createSound();
    
 }
 
