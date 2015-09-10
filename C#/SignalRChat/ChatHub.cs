@@ -12,19 +12,20 @@ namespace SignalRChat
         
         
         
-        public void Send(string name, string message)
+        public void sendAllSounds(string name, string message)
         {
             Clients.All.broadcastMessage(name, message);
         }
 
         public void createSound()
         {
-            string newId = SoundManager.Manager.addSong();
+            string newId = SoundManager.Manager.addSound();
             Clients.All.broadcastCreateSound(newId);
         }
 
         public void modifyFrequency(string id, int f)
         {
+            SoundManager.Manager.modifyFrequency(id, f);
             Clients.All.broadcastFrequencyChange(id, f);
         }
     }

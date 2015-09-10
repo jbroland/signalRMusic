@@ -7,14 +7,19 @@ namespace SignalRChat
 {
     public class Sound
     {
-        private string id;
-        private string format;
-        private string datastring;
-        private int frequency;
+        private string _id;
+        private string _format;
+        private string _datastring;
+        private int _frequency;
+
+        public Sound(int frequency)
+        {
+            _frequency = frequency;
+        }
 
         public Sound()
         {
-            
+        
         }
 
     }
