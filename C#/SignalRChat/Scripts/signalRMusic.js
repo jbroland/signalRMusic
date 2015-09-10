@@ -100,14 +100,14 @@ var updateFrequency = function (id, f) {
 }
 
 var playSounds = function () {
-    for (var i = 0; i < oscillators.length; i++) {
+    for (i in oscillators) {
         oscillators[i].start();
     }
     
 }
 
 var stopSounds = function () {
-    for (var i = 0; i < oscillators.length; i++) {
+    for (i in oscillators) {
         oscillators[i].stop();
 
         oscillators[i] = context.createOscillator();
