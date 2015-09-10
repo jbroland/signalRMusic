@@ -1,7 +1,10 @@
 ﻿var chat = $.connection.chatHub;
 $(function () {
-    $.connection.hub.start();
-    chat = $.connection.chatHub;
+    
+    $.connection.hub.start().done(function () {
+        updateClientSounds();
+    });
+    
   /*  document.getElementById('file').addEventListener('change', handleFileSelect, false);
     function handleFileSelect(evt) {
         var file = evt.target.files[0];
@@ -23,8 +26,6 @@ $(function () {
         fr.readAsBinaryString(file);
 
     }*/
-
-
 
     /*chat.client.broadcastMessage = function (name, message) {
         var len = message.length;
@@ -52,29 +53,28 @@ $(function () {
     });*/
 });
 
-
-
 var oscillators = new Array();
 var context = new AudioContext();
 
-
-
+/******ADD A SOUND FUNCTIONS ******************/
 var addSound = function () {
-    
     chat.server.createSound();
-   
 }
 
-var createHtmlElement = function (id) {
+var createHtmlElement = function (id, f) {
     //create osc object
     var temp = context.createOscillator();
     temp.connect(context.destination);
+
+    if( f ){
+        temp.frequency.value = f;
+    }
     oscillators[id] = temp;
 
     //create html element
     var html = new Array();
     html.push("<div class='sound' id='" + id + "'>");
-    html.push('<input type="range"  min="0" max="1000" value="0" onClick="setFrequency(this, this.value)"/>');
+    html.push('<input type="range"  min="0" max="1000" value="'+f+'" onClick="setFrequency(this, this.value)"/>');
     html.push('</div>');
     $(".sounds").append(html.join(""));
 }
@@ -83,6 +83,15 @@ chat.client.broadcastCreateSound = function(id){
     createHtmlElement(id);
 }
 
+chat.client.broadcastUpdateClientSounds = function (sounds) {
+    for (i in sounds) {
+        createHtmlElement(sounds[i].id, sounds[i].f);
+    }
+}
+/**********************************************************/
+
+
+/******* MODIFY REQUENCY FUNCTIONS **********************/
 var setFrequency = function (el, f) {
     var id = $(el).parents(".sound").attr("id");
     chat.server.modifyFrequency(id, parseInt(f));
@@ -98,12 +107,13 @@ var updateFrequency = function (id, f) {
         $("#" + id + " input").val(f);
     }
 }
+/*****************************************************/
 
 var playSounds = function () {
     for (i in oscillators) {
+        console.log(i);
         oscillators[i].start();
     }
-    
 }
 
 var stopSounds = function () {

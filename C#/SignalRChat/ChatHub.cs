@@ -27,5 +27,11 @@ namespace SignalRChat
         {
             Clients.All.broadcastFrequencyChange(id, f);
         }
+
+        public void updateClientSounds()
+        {
+
+            Clients.All.broadcastUpdateClientSounds();
+        }
     }
 }
