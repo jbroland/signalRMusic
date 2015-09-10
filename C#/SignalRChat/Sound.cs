@@ -10,11 +10,11 @@ namespace SignalRChat
         private string _id;
         private string _format;
         private string _datastring;
-        private int _frequency;
+        public int frequency;
 
         public Sound(int frequency)
         {
-            _frequency = frequency;
+            this.frequency = frequency;
         }
 
         public Sound()

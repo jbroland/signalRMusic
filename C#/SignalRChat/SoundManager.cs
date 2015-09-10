@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
+using System.Text;
 namespace SignalRChat
 {
   public  class SoundManager
@@ -41,6 +42,19 @@ namespace SignalRChat
       public void modifyFrequency(string id, int f)
       {
           soundDico[id] = new Sound(f);
+      }
+
+      public string convertInJSON()
+      {
+          StringBuilder json;
+          json = json.Append("[");
+          foreach (var key in soundDico)
+          {
+              json.Append("{id: " + key + ", f: " + soundDico[key].frequency.ToString() + "}," );
+          }
+          json = json.Append("]");
+
+          return json.ToString();
       }
 
   }
