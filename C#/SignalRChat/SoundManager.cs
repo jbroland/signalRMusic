@@ -60,7 +60,7 @@ namespace SignalRChat
                   firstElement = false;
               }
 
-              json = json.Append("{'id': '" + key.Key + "', 'f': '" + soundDico[key.Key].frequency.ToString() + "'}" );
+              json = json.Append("{\"id\": \"" + key.Key + "\", \"f\": \"" + soundDico[key.Key].frequency.ToString() + "\"}");
           }
           
           json = json.Append("]");
