@@ -31,11 +31,11 @@ namespace SignalRChat
       }
 
 
-      public void  addSong( )
+      public string addSong( )
       {
           var id = "sound" + soundDico.Count;
           soundDico.Add(id,new Sound());
-         
+          return id;
       }
 
   }

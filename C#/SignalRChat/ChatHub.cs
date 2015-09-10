@@ -19,8 +19,8 @@ namespace SignalRChat
 
         public void createSound()
         {
-            SoundManager.Manager.addSong();
-            Clients.All.broadcastCreateSound();
+            string newId = SoundManager.Manager.addSong();
+            Clients.All.broadcastCreateSound(newId);
         }
 
         public void modifyFrequency(string id, int f)
