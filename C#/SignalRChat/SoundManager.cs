@@ -9,6 +9,7 @@ namespace SignalRChat
       private static SoundManager _manager;
       private Dictionary<string, Sound> soundDico;
       private static readonly object locker = new object();
+      private const int MaxSound = 100;
       
       private SoundManager()
       {
@@ -35,6 +36,7 @@ namespace SignalRChat
       public string addSound( )
       {
           var id = "sound" + soundDico.Count;
+    if (soundDico.Count<=MaxSound)
           soundDico.Add(id,new Sound());
           return id;
       }

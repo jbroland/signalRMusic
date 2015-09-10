@@ -77,10 +77,12 @@ var playSounds = function () {
 
 var stopSounds = function () {
     for (i in oscillators) {
+        var saveFreq = oscillators[i].frequency.value;
         oscillators[i].stop();
 
         oscillators[i] = context.createOscillator();
         oscillators[i].connect(context.destination);
+        oscillators[i].frequency.value = saveFreq;
     }
 }
 
