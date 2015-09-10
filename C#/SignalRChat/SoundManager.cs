@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
 using System.Text;
 namespace SignalRChat
@@ -47,12 +47,23 @@ namespace SignalRChat
       public string convertInJSON()
       {
           StringBuilder json = new StringBuilder();
-          json.Append("[");
+          json = json.Append("[");
+          bool firstElement = true;
           foreach (var key in soundDico)
           {
-              json.Append("{id: " + key.Key + ", f: " + key.Value.frequency + "}," );
+              if (!firstElement)
+              {
+                  json = json.Append(",");
+              }
+              else
+              {
+                  firstElement = false;
+              }
+
+              json = json.Append("{'id': '" + key.Key + "', 'f': '" + soundDico[key.Key].frequency.ToString() + "'}" );
           }
-          json.Append("]");
+          
+          json = json.Append("]");
 
           return json.ToString();
       }
