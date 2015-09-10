@@ -3,17 +3,27 @@ using Microsoft.AspNet.SignalR;
 using System.Text;
 namespace SignalRChat
 {
-  public  class SoundManager
-  {
+    public interface ISoundManager
+    {
+        string addSound( );
+        void modifyFrequency(string id, int f);
+        string convertInJSON();
+        void resetSounds();
+    }
+
+    public  class SoundManager : ISoundManager
+    {
 
       private static SoundManager _manager;
       private Dictionary<string, Sound> soundDico;
+      private Dictionary<string, Wave> waveDico;
       private static readonly object locker = new object();
       private const int MaxSound = 100;
       
       private SoundManager()
       {
           soundDico=new Dictionary<string, Sound>();
+          waveDico=new Dictionary<string, Wave>();
 
       }
 
@@ -74,6 +84,14 @@ namespace SignalRChat
       {
           soundDico.Clear();
       }
+
+        public string AddWave()
+        {
+            var id = "wave" + waveDico.Count;
+            if (waveDico.Count <= MaxSound)
+                waveDico.Add(id, new Wave());
+            return id;
+        }
 
   }
 }

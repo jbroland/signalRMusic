@@ -40,5 +40,11 @@ namespace SignalRChat
             SoundManager.Manager.resetSounds();
             Clients.All.broadcastResetSounds();
         }
+
+        public void createWave()
+        {
+            string newId = SoundManager.Manager.AddWave();
+            Clients.All.broadcastCreateWave(newId);
+        }
     }
 }
