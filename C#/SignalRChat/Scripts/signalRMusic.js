@@ -53,6 +53,8 @@ var createAudioElement = function (id, name, buffer, audioType) {
     html.push("<source src='" + URL.createObjectURL(blob) + "'/>");
     html.push("</audio>");
     html.push("</div>");
+
+    $(".sounds").append(html.join(""));
 }
 
 
@@ -118,13 +120,15 @@ $(function () {
         var file = evt.target.files[0];
         var fr = new FileReader();
         fr.addEventListener("load", function () {
-            /*var len = fr.result.length;
+            var len = fr.result.length;
             var buf = new ArrayBuffer(len);
             var view = new Uint8Array(buf);
             for (var i = 0; i < len; i++) {
                 view[i] = fr.result.charCodeAt(i) & 0xff;
             }
-            var blob = new Blob([view], { type: file.type });  */
+            var blob = new Blob([view], { type: file.type });
+            createAudioElement("audio0", file.name, fr.result, file.type);
+
             chat.server.sendAudioFile(file.name.toString(), fr.result.toString(), file.type.toString());
         });
   
