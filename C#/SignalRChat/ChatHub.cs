@@ -7,8 +7,17 @@ namespace SignalRChat
     {
         public void Send(string name, string message)
         {
-            // Call the broadcastMessage method to update clients.
             Clients.All.broadcastMessage(name, message);
+        }
+
+        public void createSound(int id)
+        {
+            Clients.All.broadcastCreateSound(id);
+        }
+
+        public void modifyFrequency(int id, int f)
+        {
+            Clients.All.broadcastFrequencyChange(id);
         }
     }
 }
