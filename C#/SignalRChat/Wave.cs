@@ -7,5 +7,9 @@ namespace SignalRChat
 {
     public class Wave
     {
+        public string id;
+        private string _format;
+        private string _datastring;
+
     }
 }
