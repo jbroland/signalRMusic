@@ -50,7 +50,7 @@ namespace SignalRChat
           json.Append("[");
           foreach (var key in soundDico)
           {
-              json.Append("{id: " + key.Key + ", f: " + soundDico[key.Key].frequency.ToString() + "}," );
+              json.Append("{id: " + key.Key + ", f: " + key.Value.frequency + "}," );
           }
           json.Append("]");
 
