@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
 using System.Text;
 namespace SignalRChat
@@ -66,6 +66,11 @@ namespace SignalRChat
           json = json.Append("]");
 
           return json.ToString();
+      }
+
+      public void resetSounds()
+      {
+          soundDico.Clear();
       }
 
   }

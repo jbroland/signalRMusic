@@ -32,7 +32,13 @@ namespace SignalRChat
         public void updateClientSounds()
         {
             string json = SoundManager.Manager.convertInJSON();
-            Clients.Caller.broadcastUpdateClientSounds(json);
+            Clients.Caller.castUpdateClientSounds(json);
+        }
+
+        public void resetSounds()
+        {
+            SoundManager.Manager.resetSounds();
+            Clients.All.broadcastResetSounds();
         }
     }
 }

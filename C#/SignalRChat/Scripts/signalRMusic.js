@@ -29,7 +29,7 @@ chat.client.broadcastCreateSound = function(id){
     createHtmlElement(id);
 }
 
-chat.client.broadcastUpdateClientSounds = function (jsonSounds) {
+chat.client.castUpdateClientSounds = function (jsonSounds) {
     sounds = JSON.parse(jsonSounds);
     for (i in sounds) {
         createHtmlElement(sounds[i].id, sounds[i].f);
@@ -54,6 +54,18 @@ var updateFrequency = function (id, f) {
         $("#" + id + " input").val(f);
     }
 }
+/*****************************************************/
+
+
+
+/******* MODIFY REQUENCY FUNCTIONS **********************/
+
+chat.client.broadcastResetSounds = function () {
+    $(".sounds").empty();
+    oscillators = new Array();
+}
+
+
 /*****************************************************/
 
 var playSounds = function () {
