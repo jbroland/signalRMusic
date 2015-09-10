@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+</head>
+
+<body>
+
+	<button onclick="playSound()">start</button>
+	<button onclick="stopSound()">stop</button>
+	<div class="sounds">
+		<div class="sound" id="sound0">
+	 		<input type="range"  min="0" max="1000" value="0" onClick="setFrequency(this, this.value)"/>
+	 	</div>
+	 </div>
+
+ 	<button onclick="addSound()">Add sound</button>
+ 	<button>Add wav</button>
+ 	<input type="file" id="file" name="file"/>
+
+ 	<audio class="audio" id="oldAudio" autoplay="autoplay" controls="controls">
+    </audio>   
+
+    <audio class="audio" id="newAudio" controls="controls">
+    </audio>   
+</audio>
+</body>
+<script src="jquery.js"></script>
+<script src="audio-example.js"></script>
+</html>
