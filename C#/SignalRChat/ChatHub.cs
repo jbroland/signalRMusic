@@ -28,5 +28,11 @@ namespace SignalRChat
             SoundManager.Manager.modifyFrequency(id, f);
             Clients.All.broadcastFrequencyChange(id, f);
         }
+
+        public void updateClientSounds()
+        {
+
+            Clients.All.broadcastUpdateClientSounds();
+        }
     }
 }
