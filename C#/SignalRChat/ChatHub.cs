@@ -10,7 +10,7 @@ namespace SignalRChat
             Clients.All.broadcastMessage(name, message);
         }
 
-        public void createSound(int id)
+        public void createSound(string id)
         {
             Clients.All.broadcastCreateSound(id);
         }

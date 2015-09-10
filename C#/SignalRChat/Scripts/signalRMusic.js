@@ -1,5 +1,7 @@
-﻿$(function () {
-
+﻿var chat = $.connection.chatHub;
+$(function () {
+    $.connection.hub.start();
+    chat = $.connection.chatHub;
   /*  document.getElementById('file').addEventListener('change', handleFileSelect, false);
     function handleFileSelect(evt) {
         var file = evt.target.files[0];
@@ -50,35 +52,36 @@
     });*/
 });
 
-$.connection.hub.start();
-var chat = $.connection.chatHub;
+
+
 var oscillators = new Array();
 var context = new AudioContext();
 
 
 
 var addSound = function (id) {
-    //create html element
-    var html = new Array();
+    
     var newId = (id) ? id : 'sound' + oscillators.length;
-    html.push("<div class='sound' id='"+newId+"'>");
-    html.push('<input type="range"  min="0" max="1000" value="0" onClick="setFrequency(this, this.value)"/>');
-    html.push('</div>');
-    $(".sounds").append(html.join(""));
+    chat.server.createSound(newId);
+   
+}
 
+var createHtmlElement = function (id) {
     //create osc object
     var temp = context.createOscillator();
     temp.connect(context.destination);
     oscillators.push(temp);
 
-    if (!id) {
-        chat.server.createSound(newId);
-    }
-    
+    //create html element
+    var html = new Array();
+    html.push("<div class='sound' id='" + id + "'>");
+    html.push('<input type="range"  min="0" max="1000" value="0" onClick="setFrequency(this, this.value)"/>');
+    html.push('</div>');
+    $(".sounds").append(html.join(""));
 }
 
 chat.client.broadcastCreateSound = function(id){
-    addSound(id);
+    createHtmlElement(id);
 }
 
 var setFrequency = function (el, f, fromServer) {
