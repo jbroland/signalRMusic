@@ -46,13 +46,13 @@ namespace SignalRChat
 
       public string convertInJSON()
       {
-          StringBuilder json;
-          json = json.Append("[");
+          StringBuilder json = new StringBuilder();
+          json.Append("[");
           foreach (var key in soundDico)
           {
-              json.Append("{id: " + key + ", f: " + soundDico[key].frequency.ToString() + "}," );
+              json.Append("{id: " + key.Key + ", f: " + soundDico[key.Key].frequency.ToString() + "}," );
           }
-          json = json.Append("]");
+          json.Append("]");
 
           return json.ToString();
       }
