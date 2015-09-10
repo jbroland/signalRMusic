@@ -37,6 +37,27 @@ chat.client.castUpdateClientSounds = function (jsonSounds) {
 }
 /**********************************************************/
 
+/************ADD AUDIO FUNCTIONS **************************/
+var createAudioElement = function (id, name, buffer, audioType) {
+    var len = buffer.length;
+    var buf = new ArrayBuffer(len);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i < len; i++) {
+        view[i] = buffer.charCodeAt(i) & 0xff;
+    }
+    var blob = new Blob([view], { type: audioType });
+
+    html = new Array();
+    html.push("<div class='audio'>");
+    html.push("<audio id='" + id + "' controls='controls'>");
+    html.push("<source src='" + URL.createObjectURL(blob) + "'/>");
+    html.push("</audio>");
+    html.push("</div>");
+}
+
+
+/********************************************************/
+
 
 /******* MODIFY REQUENCY FUNCTIONS **********************/
 var setFrequency = function (el, f) {
@@ -92,27 +113,24 @@ $(function () {
         chat.server.updateClientSounds();
     });
 
-    /*  document.getElementById('file').addEventListener('change', handleFileSelect, false);
-      function handleFileSelect(evt) {
-          var file = evt.target.files[0];
-          var fr = new FileReader();
-          fr.addEventListener("load", function () {
-              var len = fr.result.length;
-              var buf = new ArrayBuffer(len);
-              var view = new Uint8Array(buf);
-              for (var i = 0; i < len; i++) {
-                  view[i] = fr.result.charCodeAt(i) & 0xff;
-              }
-              var blob = new Blob([view], { type: "audio/x-wav" });
+    document.getElementById('file').addEventListener('change', handleFileSelect, false);
+    function handleFileSelect(evt) {
+        var file = evt.target.files[0];
+        var fr = new FileReader();
+        fr.addEventListener("load", function () {
+            /*var len = fr.result.length;
+            var buf = new ArrayBuffer(len);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < len; i++) {
+                view[i] = fr.result.charCodeAt(i) & 0xff;
+            }
+            var blob = new Blob([view], { type: file.type });  */
+            chat.server.sendAudioFile(file.name.toString(), fr.result.toString(), file.type.toString());
+        });
   
-              $("#audioPlayer").append("<source src='" + URL.createObjectURL(blob) + "'/>")
-  
-              chat.server.send($('#displayname').val(), fr.result);
-          });
-  
-          fr.readAsBinaryString(file);
-  
-      }*/
+        fr.readAsBinaryString(file);
+
+      }
 
     /*chat.client.broadcastMessage = function (name, message) {
         var len = message.length;

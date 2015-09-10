@@ -41,10 +41,10 @@ namespace SignalRChat
             Clients.All.broadcastResetSounds();
         }
 
-        public void createWave()
+        public void sendAudioFile(string name, string buffer, string type)
         {
-            string newId = SoundManager.Manager.AddWave();
-            Clients.All.broadcastCreateWave(newId);
+            Clients.All.createAudioElement();
+        }
         }
     }
 }
