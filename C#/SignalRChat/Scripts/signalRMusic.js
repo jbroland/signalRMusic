@@ -1,8 +1,5 @@
-﻿var chat = $.connection.chatHub;
+var chat = $.connection.chatHub;
 var oscillators = new Array();
-var oscillatorsPlaying = new Array();
-var timeToPlay = new Array();
-var timeToStop = new Array();
 var context = new AudioContext();
 var isPlaying = false;
 
@@ -24,7 +21,7 @@ $(function () {
                 view[i] = fr.result.charCodeAt(i) & 0xff;
             }
             var blob = new Blob([view], { type: file.type });
-            createAudioElement("audio0", file.name, fr.result, file.type);
+            //createAudioElement("audio0", file.name, fr.result, file.type);
 
             chat.server.sendAudioFile(file.name.toString(), fr.result.toString(), file.type.toString());
         });
@@ -47,30 +44,24 @@ var createHtmlElement = function (id, f) {
         temp.frequency.value = f;
     }
     oscillators[id] = temp;
-    oscillatorsPlaying[id] = false;
-    timeToPlay[id] = 1;
-    timeToStop[id] = 0;
 
     //create html element
     var html = new Array();
     html.push("<div class='sound' id='" + id + "'>");
     html.push('<input type="range"  min="0" max="1000" value="' + f + '" onClick="setFrequency(this, this.value)"/>');
     html.push('<div class="sound_types">');
-    html.push('<input type="radio" name="type_' + id + '" value="sine">sine</input>');
+    html.push('<input type="radio" name="type_' + id + '" value="sine" checked>sine</input>');
     html.push('<input type="radio" name="type_' + id + '" value="square">square</input>');
     html.push('<input type="radio" name="type_' + id + '" value="sawtooth">sawtooth</input>');
     html.push('<input type="radio" name="type_' + id + '" value="triangle">triangle</input>');
     html.push('</div>');
-    html.push('<div class="sound_range">');
-    html.push('<input type="text" name="timePlay" onchange="modifyTimeToPlay(' + id + ',this.value)">');
-    html.push('<input type="text" name="timeStop"onchange="modifyTimeToStop(' + id + ',this.value)">');
-    html.push('</div>');
+    html.push('<button onclick="deleteSound($(this).parents(\'.sound\').attr(\'id\'))">delete</button>')
     html.push('</div>');
     $(".sounds").append(html.join(""));
 
     //bind function
     $(":radio[name='type_"+id+"']").bind('click', function () {
-        var newType = $(this + ":checked").val();
+        var newType = $(this).val();
         chat.server.modifyType(id, newType);
     });
 }
@@ -88,7 +79,7 @@ chat.client.castUpdateClientSounds = function (jsonSounds) {
 /**********************************************************/
 
 /************ADD AUDIO FUNCTIONS **************************/
-var createAudioElement = function (id, name, buffer, audioType) {
+chat.client.createAudioElement = function (id, name, buffer, audioType) {
     var len = buffer.length;
     var buf = new ArrayBuffer(len);
     var view = new Uint8Array(buf);
@@ -99,7 +90,8 @@ var createAudioElement = function (id, name, buffer, audioType) {
 
     html = new Array();
     html.push("<div class='audio'>");
-    html.push("<audio id='" + id + "' controls='controls'>");
+    html.push("<div>" + name + "</div>");
+    html.push("<audio id='" + id + "'>"); 
     html.push("<source src='" + URL.createObjectURL(blob) + "'/>");
     html.push("</audio>");
     html.push("</div>");
@@ -120,37 +112,40 @@ var setFrequency = function (el, f) {
 chat.client.broadcastFrequencyChange = function (id, f) {
     if (oscillators[id]) {
         oscillators[id].frequency.value = f;
-        $("#" + id + " input").val(f);
+        $("#" + id + " :input[type='range']").val(f);
     }
 }
 
 chat.client.broadcastTypeChange = function (id, type) {
     if (oscillators[id]) {
         oscillators[id].type = type;
-        $(":input[name='type_" + id + "'][value='" + type + "']").attr('checked', true);
+        $(":input[name='type_" + id + "']:checked").prop('checked', false);
+        $(":input[name='type_" + id + "'][value='" + type + "']").prop('checked', true);
     }
 }
 /*****************************************************/
 
-var modifyTimeToPlay = function (i, sec) {
-    timeToPlay[i] = sec;
-}
-
-var modifyTimeToStop = function (i, sec) {
-    timeToStop[i] = sec;
-}
 
 
-/******* DELETE SOUNDS FUNCTIONS **********************/
+/******* MODIFY REQUENCY FUNCTIONS **********************/
 
 chat.client.broadcastResetSounds = function () {
     $(".sounds").empty();
     oscillators = new Array();
 }
 
+chat.client.broadcastDeleteSound = function (id) {
+    $("#" + id).remove();
+}
+
 var resetSounds = function () {
     stopSounds();
     chat.server.resetSounds();
+}
+
+var deleteSound = function(id){
+    stopSounds(id);
+    chat.server.deleteSound(id);
 }
 
 
@@ -161,72 +156,45 @@ var playSounds = function () {
         return;
     else
         isPlaying = true;
+
     for (i in oscillators) {
-        console.log(i);
         oscillators[i].start();
-        oscillatorsPlaying[i] = true;
-        //stopSound(i, timeToPlay[i]);
+        
     }
+
+    $("audio").get(0).play();
 }
 
-var stopSounds = function () {
-    if (isPlaying == false)
-        return;
-    else
-        isPlaying = false;
-    for (i in oscillators) {
-        var saveFreq = oscillators[i].frequency.value;
-        oscillators[i].stop();
-        oscillatorsPlaying[i] = false;
-
-        oscillators[i] = context.createOscillator();
-        oscillators[i].connect(context.destination);
-        oscillators[i].frequency.value = saveFreq;
-        stopSound(i, 150);
+var stopSounds = function (id) {
+    if (isPlaying == false) {  return; }      
+    else { isPlaying = false; }
+        
+    if (id) {
+        oscillators[id].stop();
     }
+    else{
+        for (i in oscillators) {
+            var saveFreq = oscillators[i].frequency.value;
+            var saveType = oscillators[i].type;
+            oscillators[i].stop();
+
+            oscillators[i] = context.createOscillator();
+            oscillators[i].connect(context.destination);
+            oscillators[i].frequency.value = saveFreq;
+            oscillators[i].type = saveType;
+        }
+        $("audio").each(function(){
+            $(this).get(0).pause();
+        });
+    }
+    
 }
 
-/*var playSound = function (i, sec) {
-    if (oscillatorsPlaying[i])
-        return;
-    oscillators[i].start(context.currentTime + sec);
-    oscillatorsPlaying[i] = true;
-    isPlaying = true;
-    for (i in oscillatorsPlaying) {
-        if (!oscillatorsPlaying)
-            isPlaying = false;
-    }
-    sec += timeToPlay[i];
-    if (sec >= 100)
-        return;
-    stopSound(i, sec);
-}*/
-
-/*var stopSound = function (i, sec) {
-    if (!oscillatorsPlaying[i])
-        return;
-    var saveFreq = oscillators[i].frequency.value;
-    oscillators[i].stop(context.currentTime + sec);
-    oscillatorsPlaying[i] = false;
-    isPlaying = false;
-    for (i in oscillatorsPlaying) {
-        if (oscillatorsPlaying)
-            isPlaying = true;
-    }
-    oscillators[i] = context.createOscillator();
-    oscillators[i].connect(context.destination);
-    oscillators[i].frequency.value = saveFreq;
-    sec += timeToStop[i];
-    if (sec >= 100)
-        return;
-    playSound(i, sec);
-}*/
-
-$(function () {
+/*$(function () {
 
 
 
-    /*chat.client.broadcastMessage = function (name, message) {
+    chat.client.broadcastMessage = function (name, message) {
         var len = message.length;
         var buf = new ArrayBuffer(len);
         var view = new Uint8Array(buf);
@@ -249,5 +217,5 @@ $(function () {
 
 
         });
-    });*/
-});
+    });
+});*/

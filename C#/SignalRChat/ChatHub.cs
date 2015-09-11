@@ -47,9 +47,20 @@ namespace SignalRChat
             Clients.All.broadcastResetSounds();
         }
 
+        public void deleteSound(string id)
+        {
+            SoundManager.Manager.deleteSound(id);
+            Clients.All.broadcastDeleteSound(id);
+        }
+
         public void sendAudioFile(string name, string buffer, string type)
         {
-            Clients.All.createAudioElement(0, name, buffer, type);
+            Clients.All.createAudioElement("audio0", name, buffer, type);
+        }
+
+        public void sendAudioFile()
+        {
+            Clients.All.createAudioElement("audio0");
         }
 
        
