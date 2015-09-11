@@ -29,6 +29,12 @@ namespace SignalRChat
             Clients.All.broadcastFrequencyChange(id, f);
         }
 
+        public void modifyType(string id, string type)
+        {
+            SoundManager.Manager.modifyType(id, type);
+            Clients.All.broadcastTypeChange(id, type);
+        }
+
         public void updateClientSounds()
         {
             string json = SoundManager.Manager.convertInJSON();
@@ -45,5 +51,7 @@ namespace SignalRChat
         {
             Clients.All.createAudioElement(0, name, buffer, type);
         }
+
+       
     }
 }
