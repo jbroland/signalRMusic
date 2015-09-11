@@ -50,7 +50,7 @@ namespace SignalRChat
         public void deleteSound(string id)
         {
             SoundManager.Manager.deleteSound(id);
-            Clients.All.broadcastDeleteSound();
+            Clients.All.broadcastDeleteSound(id);
         }
 
         public void sendAudioFile(string name, string buffer, string type)

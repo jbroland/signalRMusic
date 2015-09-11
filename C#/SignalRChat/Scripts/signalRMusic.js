@@ -55,7 +55,7 @@ var createHtmlElement = function (id, f) {
     html.push('<input type="radio" name="type_' + id + '" value="sawtooth">sawtooth</input>');
     html.push('<input type="radio" name="type_' + id + '" value="triangle">triangle</input>');
     html.push('</div>');
-    html.push('<button onclick="deleteSound($(this).attr(\"id\"))">delete</button>')
+    html.push('<button onclick="deleteSound($(this).parents(\'.sound\').attr(\'id\'))">delete</button>')
     html.push('</div>');
     $(".sounds").append(html.join(""));
 
@@ -170,7 +170,6 @@ var stopSounds = function (id) {
     else { isPlaying = false; }
         
     if (id) {
-        debugger;
         oscillators[id].stop();
     }
     else{
