@@ -60,7 +60,7 @@ var createHtmlElement = function (id, f) {
 
     //bind function
     $(":radio[name='type_"+id+"']").bind('click', function () {
-        var newType = $(this + ":checked").val();
+        var newType = $(this).val();
         chat.server.modifyType(id, newType);
     });
 }
@@ -110,14 +110,15 @@ var setFrequency = function (el, f) {
 chat.client.broadcastFrequencyChange = function (id, f) {
     if (oscillators[id]) {
         oscillators[id].frequency.value = f;
-        $("#" + id + " input").val(f);
+        $("#" + id + " :input[type='range']").val(f);
     }
 }
 
 chat.client.broadcastTypeChange = function (id, type) {
     if (oscillators[id]) {
         oscillators[id].type = type;
-        $(":input[name='type_" + id + "'][value='" + type + "']").attr('checked', true);
+        $(":input[name='type_" + id + "']:checked").prop('checked', false);
+        $(":input[name='type_" + id + "'][value='" + type + "']").prop('checked', true);
     }
 }
 /*****************************************************/
@@ -157,11 +158,13 @@ var stopSounds = function () {
         isPlaying = false;
     for (i in oscillators) {
         var saveFreq = oscillators[i].frequency.value;
+        var saveType = oscillators[i].type;
         oscillators[i].stop();
 
         oscillators[i] = context.createOscillator();
         oscillators[i].connect(context.destination);
         oscillators[i].frequency.value = saveFreq;
+        oscillators[i].type = saveType;
     }
 }
 
