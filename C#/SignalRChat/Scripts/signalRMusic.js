@@ -1,5 +1,6 @@
 var chat = $.connection.chatHub;
 var oscillators = new Array();
+var gains = new Array();
 var context = new AudioContext();
 var isPlaying = false;
 
@@ -37,14 +38,20 @@ var addSound = function () {
 
 var createHtmlElement = function (id, f) {
     //create osc object
-    var temp = context.createOscillator();
-    temp.connect(context.destination);
+    var tempOsc = context.createOscillator();
+    
+
+    var tempGain = context.createGain();
+    tempOsc.connect(tempGain);
+    tempGain.connect(context.destination);
+    tempGain.gain.value = 0;
 
     if( f ){
-        temp.frequency.value = f;
+        tempOsc.frequency.value = f;
     }
-    oscillators[id] = temp;
-
+    oscillators[id] = tempOsc;
+    gains[id] = tempGain;
+    tempOsc.start();
     //create html element
     var html = new Array();
     html.push("<div class='sound' id='" + id + "'>");
@@ -158,11 +165,13 @@ var playSounds = function () {
         isPlaying = true;
 
     for (i in oscillators) {
-        oscillators[i].start();
+        gains[i].gain.value = 1;
         
     }
 
-    $("audio").get(0).play();
+    $("audio").each(function () {
+        $(this).get(0).play();
+    });
 }
 
 var stopSounds = function (id) {
@@ -174,14 +183,7 @@ var stopSounds = function (id) {
     }
     else{
         for (i in oscillators) {
-            var saveFreq = oscillators[i].frequency.value;
-            var saveType = oscillators[i].type;
-            oscillators[i].stop();
-
-            oscillators[i] = context.createOscillator();
-            oscillators[i].connect(context.destination);
-            oscillators[i].frequency.value = saveFreq;
-            oscillators[i].type = saveType;
+            gains[i].gain.value = 0;
         }
         $("audio").each(function(){
             $(this).get(0).pause();
