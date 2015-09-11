@@ -1,4 +1,4 @@
-var chat = $.connection.chatHub;
+﻿var chat = $.connection.chatHub;
 var oscillators = new Array();
 var gains = new Array();
 var context = new AudioContext();
@@ -138,20 +138,21 @@ chat.client.broadcastTypeChange = function (id, type) {
 
 chat.client.broadcastResetSounds = function () {
     $(".sounds").empty();
+    stopSounds();
     oscillators = new Array();
+
 }
 
 chat.client.broadcastDeleteSound = function (id) {
+    stopSounds(id);
     $("#" + id).remove();
 }
 
 var resetSounds = function () {
-    stopSounds();
     chat.server.resetSounds();
 }
 
 var deleteSound = function(id){
-    stopSounds(id);
     chat.server.deleteSound(id);
 }
 
@@ -159,11 +160,6 @@ var deleteSound = function(id){
 /*****************************************************/
 
 var playSounds = function () {
-    if (isPlaying == true)
-        return;
-    else
-        isPlaying = true;
-
     for (i in oscillators) {
         gains[i].gain.value = 1;
         
@@ -175,9 +171,6 @@ var playSounds = function () {
 }
 
 var stopSounds = function (id) {
-    if (isPlaying == false) {  return; }      
-    else { isPlaying = false; }
-        
     if (id) {
         oscillators[id].stop();
     }

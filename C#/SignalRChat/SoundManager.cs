@@ -19,6 +19,7 @@ namespace SignalRChat
       private Dictionary<string, Wave> waveDico;
       private static readonly object locker = new object();
       private const int MaxSound = 100;
+      private int _nbCreatedSound = 0;
       
       private SoundManager()
       {
@@ -43,9 +44,10 @@ namespace SignalRChat
       }
 
 
-      public string addSound( )
+      public string addSound()
       {
-          var id = "sound" + soundDico.Count;
+          var id = "sound" + _nbCreatedSound;
+          _nbCreatedSound++;
           if (soundDico.Count<=MaxSound)
             soundDico.Add(id,new Sound());
           return id;
