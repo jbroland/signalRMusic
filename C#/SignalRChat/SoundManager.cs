@@ -90,6 +90,11 @@ namespace SignalRChat
           soundDico.Clear();
       }
 
+      public void deleteSound(string id)
+      {
+          soundDico.Remove(id);
+      }
+
         public string AddWave()
         {
             var id = "wave" + waveDico.Count;
@@ -97,8 +102,5 @@ namespace SignalRChat
                 waveDico.Add(id, new Wave());
             return id;
         }
-
-
-      
     }
 }

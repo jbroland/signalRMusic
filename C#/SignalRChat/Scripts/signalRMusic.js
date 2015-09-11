@@ -21,7 +21,7 @@ $(function () {
                 view[i] = fr.result.charCodeAt(i) & 0xff;
             }
             var blob = new Blob([view], { type: file.type });
-            createAudioElement("audio0", file.name, fr.result, file.type);
+            //createAudioElement("audio0", file.name, fr.result, file.type);
 
             chat.server.sendAudioFile(file.name.toString(), fr.result.toString(), file.type.toString());
         });
@@ -50,11 +50,12 @@ var createHtmlElement = function (id, f) {
     html.push("<div class='sound' id='" + id + "'>");
     html.push('<input type="range"  min="0" max="1000" value="' + f + '" onClick="setFrequency(this, this.value)"/>');
     html.push('<div class="sound_types">');
-    html.push('<input type="radio" name="type_' + id + '" value="sine">sine</input>');
+    html.push('<input type="radio" name="type_' + id + '" value="sine" checked>sine</input>');
     html.push('<input type="radio" name="type_' + id + '" value="square">square</input>');
     html.push('<input type="radio" name="type_' + id + '" value="sawtooth">sawtooth</input>');
     html.push('<input type="radio" name="type_' + id + '" value="triangle">triangle</input>');
     html.push('</div>');
+    html.push('<button onclick="deleteSound($(this).attr(\"id\"))">delete</button>')
     html.push('</div>');
     $(".sounds").append(html.join(""));
 
@@ -78,7 +79,7 @@ chat.client.castUpdateClientSounds = function (jsonSounds) {
 /**********************************************************/
 
 /************ADD AUDIO FUNCTIONS **************************/
-var createAudioElement = function (id, name, buffer, audioType) {
+chat.client.createAudioElement = function (id, name, buffer, audioType) {
     var len = buffer.length;
     var buf = new ArrayBuffer(len);
     var view = new Uint8Array(buf);
@@ -89,7 +90,8 @@ var createAudioElement = function (id, name, buffer, audioType) {
 
     html = new Array();
     html.push("<div class='audio'>");
-    html.push("<audio id='" + id + "' controls='controls'>");
+    html.push("<div>" + name + "</div>");
+    html.push("<audio id='" + id + "'>"); 
     html.push("<source src='" + URL.createObjectURL(blob) + "'/>");
     html.push("</audio>");
     html.push("</div>");
@@ -132,9 +134,18 @@ chat.client.broadcastResetSounds = function () {
     oscillators = new Array();
 }
 
+chat.client.broadcastDeleteSound = function (id) {
+    $("#" + id).remove();
+}
+
 var resetSounds = function () {
     stopSounds();
     chat.server.resetSounds();
+}
+
+var deleteSound = function(id){
+    stopSounds(id);
+    chat.server.deleteSound(id);
 }
 
 
@@ -145,34 +156,46 @@ var playSounds = function () {
         return;
     else
         isPlaying = true;
+
     for (i in oscillators) {
-        console.log(i);
         oscillators[i].start();
+        
     }
+
+    $("audio").get(0).play();
 }
 
-var stopSounds = function () {
-    if (isPlaying == false)
-        return;
-    else
-        isPlaying = false;
-    for (i in oscillators) {
-        var saveFreq = oscillators[i].frequency.value;
-        var saveType = oscillators[i].type;
-        oscillators[i].stop();
-
-        oscillators[i] = context.createOscillator();
-        oscillators[i].connect(context.destination);
-        oscillators[i].frequency.value = saveFreq;
-        oscillators[i].type = saveType;
+var stopSounds = function (id) {
+    if (isPlaying == false) {  return; }      
+    else { isPlaying = false; }
+        
+    if (id) {
+        debugger;
+        oscillators[id].stop();
     }
+    else{
+        for (i in oscillators) {
+            var saveFreq = oscillators[i].frequency.value;
+            var saveType = oscillators[i].type;
+            oscillators[i].stop();
+
+            oscillators[i] = context.createOscillator();
+            oscillators[i].connect(context.destination);
+            oscillators[i].frequency.value = saveFreq;
+            oscillators[i].type = saveType;
+        }
+        $("audio").each(function(){
+            $(this).get(0).pause();
+        });
+    }
+    
 }
 
-$(function () {
+/*$(function () {
 
 
 
-    /*chat.client.broadcastMessage = function (name, message) {
+    chat.client.broadcastMessage = function (name, message) {
         var len = message.length;
         var buf = new ArrayBuffer(len);
         var view = new Uint8Array(buf);
@@ -195,5 +218,5 @@ $(function () {
 
 
         });
-    });*/
-});
+    });
+});*/
