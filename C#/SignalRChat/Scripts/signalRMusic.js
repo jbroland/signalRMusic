@@ -1,5 +1,8 @@
 ﻿var chat = $.connection.chatHub;
 var oscillators = new Array();
+var oscillatorsPlaying = new Array();
+var timeToPlay = new Array();
+var timeToStop = new Array();
 var context = new AudioContext();
 var isPlaying = false;
 
@@ -44,6 +47,9 @@ var createHtmlElement = function (id, f) {
         temp.frequency.value = f;
     }
     oscillators[id] = temp;
+    oscillatorsPlaying[id] = false;
+    timeToPlay[id] = 1;
+    timeToStop[id] = 0;
 
     //create html element
     var html = new Array();
@@ -54,6 +60,10 @@ var createHtmlElement = function (id, f) {
     html.push('<input type="radio" name="type_' + id + '" value="square">square</input>');
     html.push('<input type="radio" name="type_' + id + '" value="sawtooth">sawtooth</input>');
     html.push('<input type="radio" name="type_' + id + '" value="triangle">triangle</input>');
+    html.push('</div>');
+    html.push('<div class="sound_range">');
+    html.push('<input type="text" name="timePlay" onchange="modifyTimeToPlay(' + id + ',this.value)">');
+    html.push('<input type="text" name="timeStop"onchange="modifyTimeToStop(' + id + ',this.value)">');
     html.push('</div>');
     html.push('</div>');
     $(".sounds").append(html.join(""));
@@ -122,9 +132,16 @@ chat.client.broadcastTypeChange = function (id, type) {
 }
 /*****************************************************/
 
+var modifyTimeToPlay = function (i, sec) {
+    timeToPlay[i] = sec;
+}
+
+var modifyTimeToStop = function (i, sec) {
+    timeToStop[i] = sec;
+}
 
 
-/******* MODIFY REQUENCY FUNCTIONS **********************/
+/******* DELETE SOUNDS FUNCTIONS **********************/
 
 chat.client.broadcastResetSounds = function () {
     $(".sounds").empty();
@@ -147,6 +164,8 @@ var playSounds = function () {
     for (i in oscillators) {
         console.log(i);
         oscillators[i].start();
+        oscillatorsPlaying[i] = true;
+        //stopSound(i, timeToPlay[i]);
     }
 }
 
@@ -158,12 +177,50 @@ var stopSounds = function () {
     for (i in oscillators) {
         var saveFreq = oscillators[i].frequency.value;
         oscillators[i].stop();
+        oscillatorsPlaying[i] = false;
 
         oscillators[i] = context.createOscillator();
         oscillators[i].connect(context.destination);
         oscillators[i].frequency.value = saveFreq;
+        stopSound(i, 150);
     }
 }
+
+/*var playSound = function (i, sec) {
+    if (oscillatorsPlaying[i])
+        return;
+    oscillators[i].start(context.currentTime + sec);
+    oscillatorsPlaying[i] = true;
+    isPlaying = true;
+    for (i in oscillatorsPlaying) {
+        if (!oscillatorsPlaying)
+            isPlaying = false;
+    }
+    sec += timeToPlay[i];
+    if (sec >= 100)
+        return;
+    stopSound(i, sec);
+}*/
+
+/*var stopSound = function (i, sec) {
+    if (!oscillatorsPlaying[i])
+        return;
+    var saveFreq = oscillators[i].frequency.value;
+    oscillators[i].stop(context.currentTime + sec);
+    oscillatorsPlaying[i] = false;
+    isPlaying = false;
+    for (i in oscillatorsPlaying) {
+        if (oscillatorsPlaying)
+            isPlaying = true;
+    }
+    oscillators[i] = context.createOscillator();
+    oscillators[i].connect(context.destination);
+    oscillators[i].frequency.value = saveFreq;
+    sec += timeToStop[i];
+    if (sec >= 100)
+        return;
+    playSound(i, sec);
+}*/
 
 $(function () {
 
