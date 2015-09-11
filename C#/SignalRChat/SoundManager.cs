@@ -46,14 +46,19 @@ namespace SignalRChat
       public string addSound( )
       {
           var id = "sound" + soundDico.Count;
-    if (soundDico.Count<=MaxSound)
-          soundDico.Add(id,new Sound());
+          if (soundDico.Count<=MaxSound)
+            soundDico.Add(id,new Sound());
           return id;
       }
 
       public void modifyFrequency(string id, int f)
       {
-          soundDico[id] = new Sound(f);
+          soundDico[id].frequency = f;
+      }
+
+      public void modifyType(string id, string type)
+      {
+          soundDico[id].type = type;
       }
 
       public string convertInJSON()
@@ -93,5 +98,7 @@ namespace SignalRChat
             return id;
         }
 
-  }
+
+      
+    }
 }
