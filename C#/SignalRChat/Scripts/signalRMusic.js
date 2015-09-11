@@ -1,6 +1,7 @@
 ﻿var chat = $.connection.chatHub;
 var oscillators = new Array();
 var context = new AudioContext();
+var isPlaying = false;
 
 
 $(function () {
@@ -130,10 +131,19 @@ chat.client.broadcastResetSounds = function () {
     oscillators = new Array();
 }
 
+var resetSounds = function () {
+    stopSounds();
+    chat.server.resetSounds();
+}
+
 
 /*****************************************************/
 
 var playSounds = function () {
+    if (isPlaying == true)
+        return;
+    else
+        isPlaying = true;
     for (i in oscillators) {
         console.log(i);
         oscillators[i].start();
@@ -141,6 +151,10 @@ var playSounds = function () {
 }
 
 var stopSounds = function () {
+    if (isPlaying == false)
+        return;
+    else
+        isPlaying = false;
     for (i in oscillators) {
         var saveFreq = oscillators[i].frequency.value;
         oscillators[i].stop();
